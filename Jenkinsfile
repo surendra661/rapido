@@ -2,16 +2,15 @@ pipeline {
     agent any
 
     tools {
-        maven 'mymaven' // Make sure this Maven tool is configured in Jenkins global tools
+        maven 'mymaven'
     }
 
     environment {
-        // If you're using a token, you can add it like this, or set it inside Jenkins credentials and use with credentials block.
-        // SONAR_TOKEN = credentials('sonar-token-id')
+        SONAR_TOKEN = credentials('sonar-token-id') // Replace 'sonar-token-id' with Jenkins credentials ID
     }
 
     stages {
-        stage('Code Checkout') {
+        stage('Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/surendra661/rapido.git'
             }
@@ -26,19 +25,19 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Running unit tests'
+                echo 'Testing the application'
                 sh 'mvn test'
             }
         }
 
-        stage('CQA') {
+        stage('SonarQube Analysis') {
             steps {
-                echo 'Running SonarQube Code Quality Analysis'
-                withSonarQubeEnv('mysonar') { // 'mysonar' should match your SonarQube server name in Jenkins config
+                withSonarQubeEnv('mysonar') {
                     sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.projectKey=rapido \
-                        -Dsonar.projectName="Rapido Project"
+                        mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=Rapido-project \
+                        -Dsonar.projectName="Rapido-project" \
+                        -Dsonar.login=$SONAR_TOKEN
                     '''
                 }
             }
