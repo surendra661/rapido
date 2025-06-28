@@ -7,7 +7,8 @@ pipeline {
     stages {
         stage('code') {
             steps {
-                git 'https://github.com/surendra661/rapido.git'
+                 git branch: 'main', url: 'https://github.com/surendra661/rapido.git'
+
             }
         }
         stage('Build') {
