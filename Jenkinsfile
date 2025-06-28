@@ -19,7 +19,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the application'
-                sh 'mvn clean package install'
+                sh 'mvn clean package'
             }
         }
 
@@ -40,6 +40,22 @@ pipeline {
                         -Dsonar.login=$SONAR_TOKEN
                     '''
                 }
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                echo 'Deploying WAR file to Tomcat Server...'
+                deploy adapters: [tomcat9(
+                    alternativeDeploymentContext: '', 
+                    credentialsId: 'tomcat', 
+                    path: '', 
+                    url: 'http://54.88.246.116:8080'
+                )], 
+                contextPath: null, 
+                war: 'target/*.war'
+                
+                echo 'Deployment completed successfully!'
             }
         }
     }
