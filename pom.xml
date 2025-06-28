@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapido Clone</title>
+    <style>
+        /* CSS Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        header {
+            background-color: #ff8e3c;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+        }
+        
+        .user-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: white;
+            color: #ff8e3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .booking-section {
+            padding: 20px;
+        }
+        
+        .location-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .input-field {
+            display: flex;
+            align-items: center;
+            background-color: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        
+        .input-field input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .icon {
+            margin-right: 10px;
+            color: #ff8e3c;
+        }
+        
+        .vehicle-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .vehicle-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .vehicle-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .vehicle-card.selected {
+            border: 2px solid #ff8e3c;
+        }
+        
+        .vehicle-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #ff8e3c;
+        }
+        
+        .vehicle-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .vehicle-price {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .book-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff8e3c;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 142, 60, 0.4);
+            width: 90%;
+            max-width: 450px;
+        }
+        
+        .book-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .map-container {
+            height: 200px;
+            background-color: #ddd;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .current-location {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            padding: 8px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Rapido</div>
+            <div class="user-icon">U</div>
+        </header>
+        
+        <div class="booking-section">
+            <div class="map-container">
+                <img src="https://maps.googleapis.com/maps/api/staticmap?center=Bangalore&zoom=13&size=600x300&maptype=roadmap" alt="Map" class="map-placeholder">
+                <div class="current-location">
+                    <i class="fas fa-location-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="location-input">
+                <div class="input-field">
+                    <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <input type="text" id="pickup" placeholder="Enter pickup location">
+                </div>
+                <div class="input-field">
+                    <div class="icon"><i class="fas fa-flag"></i></div>
+                    <input type="text" id="drop" placeholder="Enter drop location">
+                </div>
+            </div>
+            
+            <h3>Choose your ride</h3>
+            <div class="vehicle-options">
+                <div class="vehicle-card" onclick="selectVehicle(this)">
+                    <div class="vehicle-icon"><i class="fas fa-motorcycle"></i></div>
+                    <div class="vehicle-name">Bike</div>
+                    <div class="vehicle-price">₹25 for 3 km</div>
+                </div>
+                <div class="vehicle-card" onclick="selectVehicle(this)">
+                    <div class="vehicle-icon"><i class="fas fa-bicycle"></i></div>
+                    <div class="vehicle-name">Bicycle</div>
+                    <div class="vehicle-price">₹15 for 3 km</div>
+                </div>
+                <div class="vehicle-card" onclick="selectVehicle(this)">
+                    <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                    <div class="vehicle-name">Auto</div>
+                    <div class="vehicle-price">₹40 for 3 km</div>
+                </div>
+                <div class="vehicle-card" onclick="selectVehicle(this)">
+                    <div class="vehicle-icon"><i class="fas fa-truck-pickup"></i></div>
+                    <div class="vehicle-name">Delivery</div>
+                    <div class="vehicle-price">₹60 for 5 km</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="book-btn" id="bookBtn" disabled onclick="bookRide()">Book Now</button>
+    </div>
+
+    <script>
+        // JavaScript functionality
+        let selectedVehicle = null;
+        
+        function selectVehicle(card) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.vehicle-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            card.classList.add('selected');
+            selectedVehicle = card.querySelector('.vehicle-name').textContent;
+            
+            // Enable book button
+            document.getElementById('bookBtn').disabled = false;
+        }
+        
+        function bookRide() {
+            const pickup = document.getElementById('pickup').value;
+            const drop = document.getElementById('drop').value;
+            
+            if (!pickup || !drop) {
+                alert('Please enter both pickup and drop locations');
+                return;
+            }
+            
+            if (!selectedVehicle) {
+                alert('Please select a vehicle type');
+                return;
+            }
+            
+            alert(`Booking confirmed!\n\nPickup: ${pickup}\nDrop: ${drop}\nVehicle: ${selectedVehicle}\n\nYour Rapido is on the way!`);
+            
+            // Reset form
+            document.getElementById('pickup').value = '';
+            document.getElementById('drop').value = '';
+            document.querySelectorAll('.vehicle-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            document.getElementById('bookBtn').disabled = true;
+            selectedVehicle = null;
+        }
+        
+        // Current location button functionality
+        document.querySelector('.current-location').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    alert(`Your current location:\nLatitude: ${position.coords.latitude}\nLongitude: ${position.coords.longitude}`);
+                }, function(error) {
+                    alert('Error getting location: ' + error.message);
+                });
+            } else {
+                alert('Geolocation is not supported by your browser');
+            }
+        });
+    </script>
+</body>
+</html>
